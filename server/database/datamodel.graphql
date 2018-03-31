@@ -1,6 +1,6 @@
 type Vote {
   id: ID! @unique
-  link: Link!  
+  link: Link!
   user: User!
 }
 
@@ -20,4 +20,11 @@ type User {
   password: String!
   links: [Link!]!
   votes: [Vote!]!
+}
+
+type Home {
+  id: ID! @unique
+  title: String!
+  price: Int!
+  nbed: Int!
 }
