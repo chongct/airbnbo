@@ -10,6 +10,8 @@ import { ApolloClient } from 'apollo-client'
 import { HttpLink } from 'apollo-link-http'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 
+import { BrowserRouter } from 'react-router-dom'
+
 // this is the link to connect to your graphql server (HTTP only!)
 const httpLink = new HttpLink({ uri: 'http://localhost:4000' })
 
@@ -22,8 +24,10 @@ const client = new ApolloClient({
 
 // ApolloProvider provides graphql connection to our main component
 ReactDOM.render(
-  <ApolloProvider client={client}>
-    <App />
-  </ApolloProvider>
+  <BrowserRouter>
+    <ApolloProvider client={client}>
+      <App />
+    </ApolloProvider>
+  </BrowserRouter>
   , document.getElementById('root'));
 registerServiceWorker();

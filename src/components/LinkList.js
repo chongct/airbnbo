@@ -37,7 +37,7 @@ class LinkList extends Component {
 
       <div>
         {linksToRender.map(link => <Link key={link.id} link={link} />)}
-        <CreateHomeForm />
+        {/* <CreateHomeForm /> */}
       </div>
     );
   }
