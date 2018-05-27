@@ -3,7 +3,7 @@ import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 
 import Link from './Link'
-import CreateHomeForm from './CreateHomeForm'
+// import CreateHomeForm from './CreateHomeForm'
 
 class LinkList extends Component {
 
