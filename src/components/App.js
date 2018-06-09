@@ -6,6 +6,7 @@ import Header from './Header'
 import LinkList from './LinkList'
 import CreateHomeForm from './CreateHomeForm'
 import Login from './Login'
+import HomeList from './HomeList'
 
 class App extends Component {
   render() {
@@ -17,6 +18,7 @@ class App extends Component {
             <Route exact path="/login" component={Login} />
             <Route exact path="/" component={LinkList} />
             <Route exact path="/create" component={CreateHomeForm} />
+            <Route exact path="/home" component={HomeList} />
           </Switch>
         </div>
       </div>

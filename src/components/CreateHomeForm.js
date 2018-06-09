@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { graphql } from 'react-apollo' // to help us run the queries
-import gql from 'graphql-tag' // write graphql queries
+import { graphql } from 'react-apollo'; // to help us run the queries
+import gql from 'graphql-tag'; // write graphql queries
+
+import { HOME_LIST } from './HomeList';
 
 class CreateHomeForm extends Component {
   constructor() {
@@ -34,7 +36,7 @@ class CreateHomeForm extends Component {
   controlSubmitForm = async (e) => {
     e.preventDefault()
 
-    console.log({...this.state})
+    // console.log({...this.state})
     console.log(this.props)
 
     let {homeTitle: title, homePrice: price, homeBeds: nbed} = this.state
@@ -45,6 +47,15 @@ class CreateHomeForm extends Component {
           title,
           price,
           nbed
+        },
+        update: (store, {data: {createHome}}) => {
+          // to load store / cached data, need to load homes first or query HOME_LIST first
+          const data = store.readQuery({query: HOME_LIST})
+          data.homes.splice(0, 0, createHome)
+          store.writeQuery({
+            query: HOME_LIST,
+            data
+          })
         }
       })
     } catch (e) {

@@ -15,6 +15,12 @@ async function feed(parent, args, ctx, info) {
   }
 }
 
+async function homes(_, _, ctx) {
+  const homes = await ctx.db.query.homes({})
+  return homes
+}
+
 module.exports = {
   feed,
+  homes
 }
