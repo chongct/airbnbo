@@ -1,11 +1,19 @@
 import React, { Component } from 'react';
 
-import { graphql } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import Home from './Home';
 
 class HomeList extends Component {
+  deleteHome = async(id) => {
+    // console.log(id)
+    await this.props.deleteHomesQuery({
+      variables: {
+        id
+      }
+    })
+  }
 
   render() {
     // console.log(this.props)
@@ -21,7 +29,7 @@ class HomeList extends Component {
     }
 
     const homesToRender = homeQuery.homes
-    let homes = homesToRender.map(home => <Home key={home.id} home={home} />)
+    let homes = homesToRender.map(home => <Home key={home.id} home={home} onDelete={this.deleteHome} />)
 
     return (
       <div>{homes}</div>
@@ -41,4 +49,15 @@ export const HOME_LIST = gql`
   }
 `
 
-export default graphql(HOME_LIST, {name: 'homeQuery'}) (HomeList);
+const DELETE_HOMES = gql`
+  mutation DeleteHomeMutation($id: ID!) {
+    deleteHome(id: $id) {
+      id
+    }
+  }
+`
+
+export default compose(
+  graphql(HOME_LIST, {name: 'homeQuery'}),
+  graphql(DELETE_HOMES, {name: 'deleteHomesQuery'})
+) (HomeList);

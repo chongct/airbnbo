@@ -7,6 +7,7 @@ import LinkList from './LinkList'
 import CreateHomeForm from './CreateHomeForm'
 import Login from './Login'
 import HomeList from './HomeList'
+import Search from './Search'
 
 class App extends Component {
   render() {
@@ -19,6 +20,7 @@ class App extends Component {
             <Route exact path="/" component={LinkList} />
             <Route exact path="/create" component={CreateHomeForm} />
             <Route exact path="/home" component={HomeList} />
+            <Route exact path="/search" component={Search} />
           </Switch>
         </div>
       </div>

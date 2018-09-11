@@ -69,10 +69,19 @@ async function createHome(parent, {title, price, nbed}, ctx, info) {
   )
 }
 
+async function deleteHome(parent, {id}, ctx, info) {
+  return ctx.db.mutation.deleteHome(
+    {
+      where: { id }
+    }
+  )
+}
+
 module.exports = {
   post,
   signup,
   login,
   vote,
-  createHome
+  createHome,
+  deleteHome
 }
