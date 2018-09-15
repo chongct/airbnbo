@@ -33,4 +33,5 @@ type User {
 type Subscription {
   newLink: LinkSubscriptionPayload
   newVote: VoteSubscriptionPayload
+  newHome: HomeSubscriptionPayload
 }

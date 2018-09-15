@@ -27,4 +27,6 @@ type Home {
   title: String!
   price: Int!
   nbed: Int!
+  postedBy: User
+  votes: [Vote!]!
 }

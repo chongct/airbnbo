@@ -61,8 +61,8 @@ class CreateHomeForm extends Component {
     } catch (e) {
       console.log(e)
     }
-    // redirect from CreateHomeForm to LinkList after a mutation was performed
-    this.props.history.push('/')
+    // redirect from CreateHomeForm to HomeList after a mutation was performed
+    this.props.history.push('/home')
   }
 
   // uncontrolled form
