@@ -77,11 +77,38 @@ async function deleteHome(parent, {id}, ctx, info) {
   )
 }
 
+async function voteHome(parent, args, ctx, info) {
+  console.log("-------------here----------------")
+  const { homeId } = args
+  const userId = getUserId(ctx)
+  const homeExists = await ctx.db.exists.VoteHome({
+    user: { id: userId },
+    home: { id: homeId },
+  })
+
+  if (homeExists) {
+    throw new Error(`Already voted for home: ${homeId}`)
+  } else {
+    console.log("voted")
+  }
+
+  return ctx.db.mutation.createVoteHome(
+    {
+      data: {
+        user: { connect: { id: userId } },
+        home: { connect: { id: homeId } },
+      },
+    },
+    info,
+  )
+}
+
 module.exports = {
   post,
   signup,
   login,
   vote,
   createHome,
-  deleteHome
+  deleteHome,
+  voteHome
 }

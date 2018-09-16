@@ -43,6 +43,7 @@ class LinkList extends Component {
   }
 
   _updateCacheAfterVote = (store, createVote, linkId) => {
+    console.log(createVote)
     const data = store.readQuery({query: FEED_QUERY})
     const votedLink = data.feed.links.find(link => link.id === linkId)
     votedLink.votes = createVote.link.votes

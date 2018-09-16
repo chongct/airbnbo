@@ -29,8 +29,19 @@ const newHome = {
   }
 }
 
+const newVoteHome = {
+  subscribe: (parent, args, ctx, info) => {
+    // console.log("--------test vote subscription-----------")
+    return ctx.db.subscription.voteHome(
+      { },
+      info
+    )
+  }
+}
+
 module.exports = {
   newLink,
   newVote,
-  newHome
+  newHome,
+  newVoteHome
 }

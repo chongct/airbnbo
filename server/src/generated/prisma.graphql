@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/public-neonscar-158/hackernews-graphql-js/dev
-# timestamp: Sat Sep 15 2018 22:36:55 GMT+0800 (+08)
+# timestamp: Sun Sep 16 2018 00:58:23 GMT+0800 (+08)
 
 type AggregateHome {
   count: Int!
@@ -17,6 +17,10 @@ type AggregateVote {
   count: Int!
 }
 
+type AggregateVoteHome {
+  count: Int!
+}
+
 type BatchPayload {
   """The number of nodes that have been affected by the Batch operation."""
   count: Long!
@@ -30,7 +34,7 @@ type Home implements Node {
   price: Int!
   nbed: Int!
   postedBy(where: UserWhereInput): User
-  votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote!]
+  votes(where: VoteHomeWhereInput, orderBy: VoteHomeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [VoteHome!]
 }
 
 """A connection to a list of items."""
@@ -47,8 +51,32 @@ input HomeCreateInput {
   title: String!
   price: Int!
   nbed: Int!
-  postedBy: UserCreateOneInput
-  votes: VoteCreateManyInput
+  postedBy: UserCreateOneWithoutHomesInput
+  votes: VoteHomeCreateManyWithoutHomeInput
+}
+
+input HomeCreateManyWithoutPostedByInput {
+  create: [HomeCreateWithoutPostedByInput!]
+  connect: [HomeWhereUniqueInput!]
+}
+
+input HomeCreateOneWithoutVotesInput {
+  create: HomeCreateWithoutVotesInput
+  connect: HomeWhereUniqueInput
+}
+
+input HomeCreateWithoutPostedByInput {
+  title: String!
+  price: Int!
+  nbed: Int!
+  votes: VoteHomeCreateManyWithoutHomeInput
+}
+
+input HomeCreateWithoutVotesInput {
+  title: String!
+  price: Int!
+  nbed: Int!
+  postedBy: UserCreateOneWithoutHomesInput
 }
 
 """An edge in a connection."""
@@ -125,8 +153,54 @@ input HomeUpdateInput {
   title: String
   price: Int
   nbed: Int
-  postedBy: UserUpdateOneInput
-  votes: VoteUpdateManyInput
+  postedBy: UserUpdateOneWithoutHomesInput
+  votes: VoteHomeUpdateManyWithoutHomeInput
+}
+
+input HomeUpdateManyWithoutPostedByInput {
+  create: [HomeCreateWithoutPostedByInput!]
+  connect: [HomeWhereUniqueInput!]
+  disconnect: [HomeWhereUniqueInput!]
+  delete: [HomeWhereUniqueInput!]
+  update: [HomeUpdateWithWhereUniqueWithoutPostedByInput!]
+  upsert: [HomeUpsertWithWhereUniqueWithoutPostedByInput!]
+}
+
+input HomeUpdateOneRequiredWithoutVotesInput {
+  create: HomeCreateWithoutVotesInput
+  connect: HomeWhereUniqueInput
+  update: HomeUpdateWithoutVotesDataInput
+  upsert: HomeUpsertWithoutVotesInput
+}
+
+input HomeUpdateWithoutPostedByDataInput {
+  title: String
+  price: Int
+  nbed: Int
+  votes: VoteHomeUpdateManyWithoutHomeInput
+}
+
+input HomeUpdateWithoutVotesDataInput {
+  title: String
+  price: Int
+  nbed: Int
+  postedBy: UserUpdateOneWithoutHomesInput
+}
+
+input HomeUpdateWithWhereUniqueWithoutPostedByInput {
+  where: HomeWhereUniqueInput!
+  data: HomeUpdateWithoutPostedByDataInput!
+}
+
+input HomeUpsertWithoutVotesInput {
+  update: HomeUpdateWithoutVotesDataInput!
+  create: HomeCreateWithoutVotesInput!
+}
+
+input HomeUpsertWithWhereUniqueWithoutPostedByInput {
+  where: HomeWhereUniqueInput!
+  update: HomeUpdateWithoutPostedByDataInput!
+  create: HomeCreateWithoutPostedByInput!
 }
 
 input HomeWhereInput {
@@ -263,9 +337,9 @@ input HomeWhereInput {
   """All values greater than or equal the given value."""
   nbed_gte: Int
   postedBy: UserWhereInput
-  votes_every: VoteWhereInput
-  votes_some: VoteWhereInput
-  votes_none: VoteWhereInput
+  votes_every: VoteHomeWhereInput
+  votes_some: VoteHomeWhereInput
+  votes_none: VoteHomeWhereInput
 }
 
 input HomeWhereUniqueInput {
@@ -607,30 +681,36 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 type Mutation {
-  createLink(data: LinkCreateInput!): Link!
-  createHome(data: HomeCreateInput!): Home!
-  createUser(data: UserCreateInput!): User!
   createVote(data: VoteCreateInput!): Vote!
-  updateLink(data: LinkUpdateInput!, where: LinkWhereUniqueInput!): Link
-  updateHome(data: HomeUpdateInput!, where: HomeWhereUniqueInput!): Home
-  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  createVoteHome(data: VoteHomeCreateInput!): VoteHome!
+  createLink(data: LinkCreateInput!): Link!
+  createUser(data: UserCreateInput!): User!
+  createHome(data: HomeCreateInput!): Home!
   updateVote(data: VoteUpdateInput!, where: VoteWhereUniqueInput!): Vote
-  deleteLink(where: LinkWhereUniqueInput!): Link
-  deleteHome(where: HomeWhereUniqueInput!): Home
-  deleteUser(where: UserWhereUniqueInput!): User
+  updateVoteHome(data: VoteHomeUpdateInput!, where: VoteHomeWhereUniqueInput!): VoteHome
+  updateLink(data: LinkUpdateInput!, where: LinkWhereUniqueInput!): Link
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateHome(data: HomeUpdateInput!, where: HomeWhereUniqueInput!): Home
   deleteVote(where: VoteWhereUniqueInput!): Vote
-  upsertLink(where: LinkWhereUniqueInput!, create: LinkCreateInput!, update: LinkUpdateInput!): Link!
-  upsertHome(where: HomeWhereUniqueInput!, create: HomeCreateInput!, update: HomeUpdateInput!): Home!
-  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  deleteVoteHome(where: VoteHomeWhereUniqueInput!): VoteHome
+  deleteLink(where: LinkWhereUniqueInput!): Link
+  deleteUser(where: UserWhereUniqueInput!): User
+  deleteHome(where: HomeWhereUniqueInput!): Home
   upsertVote(where: VoteWhereUniqueInput!, create: VoteCreateInput!, update: VoteUpdateInput!): Vote!
-  updateManyLinks(data: LinkUpdateInput!, where: LinkWhereInput): BatchPayload!
-  updateManyHomes(data: HomeUpdateInput!, where: HomeWhereInput): BatchPayload!
-  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
+  upsertVoteHome(where: VoteHomeWhereUniqueInput!, create: VoteHomeCreateInput!, update: VoteHomeUpdateInput!): VoteHome!
+  upsertLink(where: LinkWhereUniqueInput!, create: LinkCreateInput!, update: LinkUpdateInput!): Link!
+  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  upsertHome(where: HomeWhereUniqueInput!, create: HomeCreateInput!, update: HomeUpdateInput!): Home!
   updateManyVotes(data: VoteUpdateInput!, where: VoteWhereInput): BatchPayload!
-  deleteManyLinks(where: LinkWhereInput): BatchPayload!
-  deleteManyHomes(where: HomeWhereInput): BatchPayload!
-  deleteManyUsers(where: UserWhereInput): BatchPayload!
+  updateManyVoteHomes(data: VoteHomeUpdateInput!, where: VoteHomeWhereInput): BatchPayload!
+  updateManyLinks(data: LinkUpdateInput!, where: LinkWhereInput): BatchPayload!
+  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
+  updateManyHomes(data: HomeUpdateInput!, where: HomeWhereInput): BatchPayload!
   deleteManyVotes(where: VoteWhereInput): BatchPayload!
+  deleteManyVoteHomes(where: VoteHomeWhereInput): BatchPayload!
+  deleteManyLinks(where: LinkWhereInput): BatchPayload!
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
+  deleteManyHomes(where: HomeWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -661,18 +741,21 @@ type PageInfo {
 }
 
 type Query {
-  links(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link]!
-  homes(where: HomeWhereInput, orderBy: HomeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Home]!
-  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote]!
-  link(where: LinkWhereUniqueInput!): Link
-  home(where: HomeWhereUniqueInput!): Home
-  user(where: UserWhereUniqueInput!): User
+  voteHomes(where: VoteHomeWhereInput, orderBy: VoteHomeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [VoteHome]!
+  links(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link]!
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  homes(where: HomeWhereInput, orderBy: HomeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Home]!
   vote(where: VoteWhereUniqueInput!): Vote
-  linksConnection(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LinkConnection!
-  homesConnection(where: HomeWhereInput, orderBy: HomeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HomeConnection!
-  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  voteHome(where: VoteHomeWhereUniqueInput!): VoteHome
+  link(where: LinkWhereUniqueInput!): Link
+  user(where: UserWhereUniqueInput!): User
+  home(where: HomeWhereUniqueInput!): Home
   votesConnection(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): VoteConnection!
+  voteHomesConnection(where: VoteHomeWhereInput, orderBy: VoteHomeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): VoteHomeConnection!
+  linksConnection(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LinkConnection!
+  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  homesConnection(where: HomeWhereInput, orderBy: HomeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HomeConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -682,10 +765,11 @@ type Query {
 }
 
 type Subscription {
-  link(where: LinkSubscriptionWhereInput): LinkSubscriptionPayload
-  home(where: HomeSubscriptionWhereInput): HomeSubscriptionPayload
-  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   vote(where: VoteSubscriptionWhereInput): VoteSubscriptionPayload
+  voteHome(where: VoteHomeSubscriptionWhereInput): VoteHomeSubscriptionPayload
+  link(where: LinkSubscriptionWhereInput): LinkSubscriptionPayload
+  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  home(where: HomeSubscriptionWhereInput): HomeSubscriptionPayload
 }
 
 type User implements Node {
@@ -695,6 +779,8 @@ type User implements Node {
   password: String!
   links(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link!]
   votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote!]
+  homes(where: HomeWhereInput, orderBy: HomeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Home!]
+  votesHome(where: VoteHomeWhereInput, orderBy: VoteHomeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [VoteHome!]
 }
 
 """A connection to a list of items."""
@@ -713,10 +799,12 @@ input UserCreateInput {
   password: String!
   links: LinkCreateManyWithoutPostedByInput
   votes: VoteCreateManyWithoutUserInput
+  homes: HomeCreateManyWithoutPostedByInput
+  votesHome: VoteHomeCreateManyWithoutUserInput
 }
 
-input UserCreateOneInput {
-  create: UserCreateInput
+input UserCreateOneWithoutHomesInput {
+  create: UserCreateWithoutHomesInput
   connect: UserWhereUniqueInput
 }
 
@@ -725,9 +813,23 @@ input UserCreateOneWithoutLinksInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateOneWithoutVotesHomeInput {
+  create: UserCreateWithoutVotesHomeInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreateOneWithoutVotesInput {
   create: UserCreateWithoutVotesInput
   connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutHomesInput {
+  name: String!
+  email: String!
+  password: String!
+  links: LinkCreateManyWithoutPostedByInput
+  votes: VoteCreateManyWithoutUserInput
+  votesHome: VoteHomeCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutLinksInput {
@@ -735,6 +837,17 @@ input UserCreateWithoutLinksInput {
   email: String!
   password: String!
   votes: VoteCreateManyWithoutUserInput
+  homes: HomeCreateManyWithoutPostedByInput
+  votesHome: VoteHomeCreateManyWithoutUserInput
+}
+
+input UserCreateWithoutVotesHomeInput {
+  name: String!
+  email: String!
+  password: String!
+  links: LinkCreateManyWithoutPostedByInput
+  votes: VoteCreateManyWithoutUserInput
+  homes: HomeCreateManyWithoutPostedByInput
 }
 
 input UserCreateWithoutVotesInput {
@@ -742,6 +855,8 @@ input UserCreateWithoutVotesInput {
   email: String!
   password: String!
   links: LinkCreateManyWithoutPostedByInput
+  homes: HomeCreateManyWithoutPostedByInput
+  votesHome: VoteHomeCreateManyWithoutUserInput
 }
 
 """An edge in a connection."""
@@ -814,29 +929,21 @@ input UserSubscriptionWhereInput {
   node: UserWhereInput
 }
 
-input UserUpdateDataInput {
-  name: String
-  email: String
-  password: String
-  links: LinkUpdateManyWithoutPostedByInput
-  votes: VoteUpdateManyWithoutUserInput
-}
-
 input UserUpdateInput {
   name: String
   email: String
   password: String
   links: LinkUpdateManyWithoutPostedByInput
   votes: VoteUpdateManyWithoutUserInput
+  homes: HomeUpdateManyWithoutPostedByInput
+  votesHome: VoteHomeUpdateManyWithoutUserInput
 }
 
-input UserUpdateOneInput {
-  create: UserCreateInput
+input UserUpdateOneRequiredWithoutVotesHomeInput {
+  create: UserCreateWithoutVotesHomeInput
   connect: UserWhereUniqueInput
-  disconnect: Boolean
-  delete: Boolean
-  update: UserUpdateDataInput
-  upsert: UserUpsertNestedInput
+  update: UserUpdateWithoutVotesHomeDataInput
+  upsert: UserUpsertWithoutVotesHomeInput
 }
 
 input UserUpdateOneRequiredWithoutVotesInput {
@@ -844,6 +951,15 @@ input UserUpdateOneRequiredWithoutVotesInput {
   connect: UserWhereUniqueInput
   update: UserUpdateWithoutVotesDataInput
   upsert: UserUpsertWithoutVotesInput
+}
+
+input UserUpdateOneWithoutHomesInput {
+  create: UserCreateWithoutHomesInput
+  connect: UserWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: UserUpdateWithoutHomesDataInput
+  upsert: UserUpsertWithoutHomesInput
 }
 
 input UserUpdateOneWithoutLinksInput {
@@ -855,11 +971,22 @@ input UserUpdateOneWithoutLinksInput {
   upsert: UserUpsertWithoutLinksInput
 }
 
+input UserUpdateWithoutHomesDataInput {
+  name: String
+  email: String
+  password: String
+  links: LinkUpdateManyWithoutPostedByInput
+  votes: VoteUpdateManyWithoutUserInput
+  votesHome: VoteHomeUpdateManyWithoutUserInput
+}
+
 input UserUpdateWithoutLinksDataInput {
   name: String
   email: String
   password: String
   votes: VoteUpdateManyWithoutUserInput
+  homes: HomeUpdateManyWithoutPostedByInput
+  votesHome: VoteHomeUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutVotesDataInput {
@@ -867,16 +994,32 @@ input UserUpdateWithoutVotesDataInput {
   email: String
   password: String
   links: LinkUpdateManyWithoutPostedByInput
+  homes: HomeUpdateManyWithoutPostedByInput
+  votesHome: VoteHomeUpdateManyWithoutUserInput
 }
 
-input UserUpsertNestedInput {
-  update: UserUpdateDataInput!
-  create: UserCreateInput!
+input UserUpdateWithoutVotesHomeDataInput {
+  name: String
+  email: String
+  password: String
+  links: LinkUpdateManyWithoutPostedByInput
+  votes: VoteUpdateManyWithoutUserInput
+  homes: HomeUpdateManyWithoutPostedByInput
+}
+
+input UserUpsertWithoutHomesInput {
+  update: UserUpdateWithoutHomesDataInput!
+  create: UserCreateWithoutHomesInput!
 }
 
 input UserUpsertWithoutLinksInput {
   update: UserUpdateWithoutLinksDataInput!
   create: UserCreateWithoutLinksInput!
+}
+
+input UserUpsertWithoutVotesHomeInput {
+  update: UserUpdateWithoutVotesHomeDataInput!
+  create: UserCreateWithoutVotesHomeInput!
 }
 
 input UserUpsertWithoutVotesInput {
@@ -1059,6 +1202,12 @@ input UserWhereInput {
   votes_every: VoteWhereInput
   votes_some: VoteWhereInput
   votes_none: VoteWhereInput
+  homes_every: HomeWhereInput
+  homes_some: HomeWhereInput
+  homes_none: HomeWhereInput
+  votesHome_every: VoteHomeWhereInput
+  votesHome_some: VoteHomeWhereInput
+  votesHome_none: VoteHomeWhereInput
 }
 
 input UserWhereUniqueInput {
@@ -1087,11 +1236,6 @@ input VoteCreateInput {
   user: UserCreateOneWithoutVotesInput!
 }
 
-input VoteCreateManyInput {
-  create: [VoteCreateInput!]
-  connect: [VoteWhereUniqueInput!]
-}
-
 input VoteCreateManyWithoutLinkInput {
   create: [VoteCreateWithoutLinkInput!]
   connect: [VoteWhereUniqueInput!]
@@ -1117,6 +1261,216 @@ type VoteEdge {
 
   """A cursor for use in pagination."""
   cursor: String!
+}
+
+type VoteHome implements Node {
+  id: ID!
+  home(where: HomeWhereInput): Home!
+  user(where: UserWhereInput): User!
+}
+
+"""A connection to a list of items."""
+type VoteHomeConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [VoteHomeEdge]!
+  aggregate: AggregateVoteHome!
+}
+
+input VoteHomeCreateInput {
+  home: HomeCreateOneWithoutVotesInput!
+  user: UserCreateOneWithoutVotesHomeInput!
+}
+
+input VoteHomeCreateManyWithoutHomeInput {
+  create: [VoteHomeCreateWithoutHomeInput!]
+  connect: [VoteHomeWhereUniqueInput!]
+}
+
+input VoteHomeCreateManyWithoutUserInput {
+  create: [VoteHomeCreateWithoutUserInput!]
+  connect: [VoteHomeWhereUniqueInput!]
+}
+
+input VoteHomeCreateWithoutHomeInput {
+  user: UserCreateOneWithoutVotesHomeInput!
+}
+
+input VoteHomeCreateWithoutUserInput {
+  home: HomeCreateOneWithoutVotesInput!
+}
+
+"""An edge in a connection."""
+type VoteHomeEdge {
+  """The item at the end of the edge."""
+  node: VoteHome!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum VoteHomeOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type VoteHomePreviousValues {
+  id: ID!
+}
+
+type VoteHomeSubscriptionPayload {
+  mutation: MutationType!
+  node: VoteHome
+  updatedFields: [String!]
+  previousValues: VoteHomePreviousValues
+}
+
+input VoteHomeSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [VoteHomeSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [VoteHomeSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [VoteHomeSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: VoteHomeWhereInput
+}
+
+input VoteHomeUpdateInput {
+  home: HomeUpdateOneRequiredWithoutVotesInput
+  user: UserUpdateOneRequiredWithoutVotesHomeInput
+}
+
+input VoteHomeUpdateManyWithoutHomeInput {
+  create: [VoteHomeCreateWithoutHomeInput!]
+  connect: [VoteHomeWhereUniqueInput!]
+  disconnect: [VoteHomeWhereUniqueInput!]
+  delete: [VoteHomeWhereUniqueInput!]
+  update: [VoteHomeUpdateWithWhereUniqueWithoutHomeInput!]
+  upsert: [VoteHomeUpsertWithWhereUniqueWithoutHomeInput!]
+}
+
+input VoteHomeUpdateManyWithoutUserInput {
+  create: [VoteHomeCreateWithoutUserInput!]
+  connect: [VoteHomeWhereUniqueInput!]
+  disconnect: [VoteHomeWhereUniqueInput!]
+  delete: [VoteHomeWhereUniqueInput!]
+  update: [VoteHomeUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [VoteHomeUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input VoteHomeUpdateWithoutHomeDataInput {
+  user: UserUpdateOneRequiredWithoutVotesHomeInput
+}
+
+input VoteHomeUpdateWithoutUserDataInput {
+  home: HomeUpdateOneRequiredWithoutVotesInput
+}
+
+input VoteHomeUpdateWithWhereUniqueWithoutHomeInput {
+  where: VoteHomeWhereUniqueInput!
+  data: VoteHomeUpdateWithoutHomeDataInput!
+}
+
+input VoteHomeUpdateWithWhereUniqueWithoutUserInput {
+  where: VoteHomeWhereUniqueInput!
+  data: VoteHomeUpdateWithoutUserDataInput!
+}
+
+input VoteHomeUpsertWithWhereUniqueWithoutHomeInput {
+  where: VoteHomeWhereUniqueInput!
+  update: VoteHomeUpdateWithoutHomeDataInput!
+  create: VoteHomeCreateWithoutHomeInput!
+}
+
+input VoteHomeUpsertWithWhereUniqueWithoutUserInput {
+  where: VoteHomeWhereUniqueInput!
+  update: VoteHomeUpdateWithoutUserDataInput!
+  create: VoteHomeCreateWithoutUserInput!
+}
+
+input VoteHomeWhereInput {
+  """Logical AND on all given filters."""
+  AND: [VoteHomeWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [VoteHomeWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [VoteHomeWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  home: HomeWhereInput
+  user: UserWhereInput
+}
+
+input VoteHomeWhereUniqueInput {
+  id: ID
 }
 
 enum VoteOrderByInput {
@@ -1171,23 +1525,9 @@ input VoteSubscriptionWhereInput {
   node: VoteWhereInput
 }
 
-input VoteUpdateDataInput {
-  link: LinkUpdateOneRequiredWithoutVotesInput
-  user: UserUpdateOneRequiredWithoutVotesInput
-}
-
 input VoteUpdateInput {
   link: LinkUpdateOneRequiredWithoutVotesInput
   user: UserUpdateOneRequiredWithoutVotesInput
-}
-
-input VoteUpdateManyInput {
-  create: [VoteCreateInput!]
-  connect: [VoteWhereUniqueInput!]
-  disconnect: [VoteWhereUniqueInput!]
-  delete: [VoteWhereUniqueInput!]
-  update: [VoteUpdateWithWhereUniqueNestedInput!]
-  upsert: [VoteUpsertWithWhereUniqueNestedInput!]
 }
 
 input VoteUpdateManyWithoutLinkInput {
@@ -1216,11 +1556,6 @@ input VoteUpdateWithoutUserDataInput {
   link: LinkUpdateOneRequiredWithoutVotesInput
 }
 
-input VoteUpdateWithWhereUniqueNestedInput {
-  where: VoteWhereUniqueInput!
-  data: VoteUpdateDataInput!
-}
-
 input VoteUpdateWithWhereUniqueWithoutLinkInput {
   where: VoteWhereUniqueInput!
   data: VoteUpdateWithoutLinkDataInput!
@@ -1229,12 +1564,6 @@ input VoteUpdateWithWhereUniqueWithoutLinkInput {
 input VoteUpdateWithWhereUniqueWithoutUserInput {
   where: VoteWhereUniqueInput!
   data: VoteUpdateWithoutUserDataInput!
-}
-
-input VoteUpsertWithWhereUniqueNestedInput {
-  where: VoteWhereUniqueInput!
-  update: VoteUpdateDataInput!
-  create: VoteCreateInput!
 }
 
 input VoteUpsertWithWhereUniqueWithoutLinkInput {

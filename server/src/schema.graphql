@@ -2,12 +2,16 @@
 
 type Query {
   feed(filter: String, skip: Int, first: Int, orderBy: LinkOrderByInput): Feed!
-  homes(filter: String, skip: Int, first: Int, orderBy: LinkOrderByInput): [Home!]!
+  homeslist(filter: String, skip: Int, first: Int, orderBy: LinkOrderByInput): HomesList!
 }
 
 type Feed {
   links: [Link!]!
   count: Int!
+}
+
+type HomesList {
+  homes: [Home!]!
 }
 
 type Mutation {
@@ -17,6 +21,7 @@ type Mutation {
   vote(linkId: ID!): Vote
   createHome(title: String!, price: Int!, nbed: Int!): Home!
   deleteHome(id: ID!): Home!
+  voteHome(homeId: ID!): VoteHome
 }
 
 type AuthPayload {
@@ -34,4 +39,5 @@ type Subscription {
   newLink: LinkSubscriptionPayload
   newVote: VoteSubscriptionPayload
   newHome: HomeSubscriptionPayload
+  newVoteHome: VoteHomeSubscriptionPayload
 }

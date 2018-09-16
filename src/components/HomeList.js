@@ -8,7 +8,7 @@ import Home from './Home';
 class HomeList extends Component {
   deleteHome = async(id) => {
     // console.log(id)
-    await this.props.deleteHomesQuery({
+    await this.props.deleteHomesMutation({
       variables: {
         id
       }
@@ -19,7 +19,7 @@ class HomeList extends Component {
     subscribeToMore({
       document: NEW_HOMES_SUBSCRIPTION,
       updateQuery: (prev, { subscriptionData }) => {
-        // console.log(prev)
+        console.log(prev)
         if (!subscriptionData.data) return prev
         const newHome = subscriptionData.data.newHome.node
 
@@ -32,6 +32,21 @@ class HomeList extends Component {
       }
     })
   }
+
+  _updateCacheAfterVote = (store, createVoteHome, homeId) => {
+    const data = store.readQuery({query: HOME_LIST})
+    // console.log(createVoteHome)
+    const votedHome = data.homeslist.homes.find(home => home.id === homeId)
+    votedHome.votes = createVoteHome.home.votes
+    store.writeQuery({query: HOME_LIST, data})
+  }
+
+  _subscribeToNewVotes = subscribeToMore => {
+    subscribeToMore({
+      document: NEW_VOTES_SUBSCRIPTION
+    })
+  }
+
 
   render() {
     // console.log(this.props)
@@ -48,9 +63,10 @@ class HomeList extends Component {
 
     // component subscribes to events
     this._subscribeToNewHomes(homeQuery.subscribeToMore)
+    this._subscribeToNewVotes(homeQuery.subscribeToMore)
 
-    const homesToRender = homeQuery.homes
-    let homes = homesToRender.map(home => <Home key={home.id} home={home} onDelete={this.deleteHome} />)
+    const homesToRender = homeQuery.homeslist.homes
+    let homes = homesToRender.map((home, index) => <Home key={home.id} index={index} home={home} onDelete={this.deleteHome} updateStoreAfterVote={this._updateCacheAfterVote}/>)
 
     return (
       <div>{homes}</div>
@@ -58,14 +74,48 @@ class HomeList extends Component {
   }
 
 }
+//
+// export const HOME_LIST = gql`
+//   query HomeQuery {
+//     homes {
+//       id
+//       title
+//       price
+//       nbed
+//       postedBy {
+//         id
+//         name
+//       }
+//       votes {
+//         id
+//         user {
+//           id
+//         }
+//       }
+//     }
+//   }
+// `
+//
 
 export const HOME_LIST = gql`
   query HomeQuery {
-    homes {
-      id
-      title
-      price
-      nbed
+    homeslist {
+      homes {
+        id
+        title
+        price
+        nbed
+        postedBy {
+          id
+          name
+        }
+        votes {
+          id
+          user {
+            id
+          }
+        }
+      }
     }
   }
 `
@@ -94,7 +144,25 @@ const NEW_HOMES_SUBSCRIPTION = gql`
   }
 `
 
+const NEW_VOTES_SUBSCRIPTION = gql`
+  subscription {
+    newVoteHome {
+      node {
+        id
+        home {
+          id
+          title
+        }
+        user {
+          id
+          name
+        }
+      }
+    }
+  }
+`
+
 export default compose(
   graphql(HOME_LIST, {name: 'homeQuery'}),
-  graphql(DELETE_HOMES, {name: 'deleteHomesQuery'})
+  graphql(DELETE_HOMES, {name: 'deleteHomesMutation'})
 ) (HomeList);

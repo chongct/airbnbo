@@ -68,7 +68,8 @@ const link = split( // split takes three arguments
 const client = new ApolloClient({
   link,
   // link: httpLinkWithAuthToken,
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
+  // onError: (e) => { console.log(e.graphQLErrors) }
 })
 
 

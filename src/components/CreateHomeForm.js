@@ -51,7 +51,7 @@ class CreateHomeForm extends Component {
         update: (store, {data: {createHome}}) => {
           // to load store / cached data, need to load homes first or query HOME_LIST first
           const data = store.readQuery({query: HOME_LIST})
-          data.homes.splice(0, 0, createHome)
+          data.homeslist.homes.splice(0, 0, createHome)
           store.writeQuery({
             query: HOME_LIST,
             data

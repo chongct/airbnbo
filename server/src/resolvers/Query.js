@@ -9,7 +9,7 @@ async function feed(parent, args, ctx, info) {
 
   const queriedLinkes = await ctx.db.query.links({ first, skip, where })
 
-  console.log(queriedLinkes)
+  console.log(ctx.db.query)
 
   return {
     linkIds: queriedLinkes.map(link => link.id),
@@ -22,7 +22,7 @@ async function feed(parent, args, ctx, info) {
 //   return homes
 // }
 
-async function homes(parent, args, ctx, info) {
+async function homeslist(parent, args, ctx, info) {
   // edit schema.graphql too
   // edit field to search for under _contains too
   const { filter, first, skip } = args // destructure input arguments
@@ -34,11 +34,14 @@ async function homes(parent, args, ctx, info) {
   const count = homes.length
 
   const queriedHomes = await ctx.db.query.homes({ first, skip, where })
+  console.log(ctx.db.query)
 
-  return queriedHomes
+  return {
+    homeIds: queriedHomes.map(home => home.id)
+  }
 }
 
 module.exports = {
   feed,
-  homes
+  homeslist
 }

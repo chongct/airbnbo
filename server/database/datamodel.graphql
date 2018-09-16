@@ -4,6 +4,12 @@ type Vote {
   user: User!
 }
 
+type VoteHome {
+  id: ID! @unique
+  home: Home!
+  user: User!
+}
+
 type Link {
   id: ID! @unique
   createdAt: DateTime!
@@ -20,6 +26,8 @@ type User {
   password: String!
   links: [Link!]!
   votes: [Vote!]!
+  homes: [Home!]!
+  votesHome: [VoteHome!]!
 }
 
 type Home {
@@ -28,5 +36,5 @@ type Home {
   price: Int!
   nbed: Int!
   postedBy: User
-  votes: [Vote!]!
+  votes: [VoteHome!]!
 }
