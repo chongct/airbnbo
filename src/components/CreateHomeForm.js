@@ -4,6 +4,8 @@ import gql from 'graphql-tag'; // write graphql queries
 
 import { HOME_LIST } from './HomeList';
 
+import { HOMES_PER_PAGE } from '../constants';
+
 class CreateHomeForm extends Component {
   constructor() {
     super()
@@ -49,12 +51,22 @@ class CreateHomeForm extends Component {
           nbed
         },
         update: (store, {data: {createHome}}) => {
+          const first = HOMES_PER_PAGE
+          const skip = 0
+          const orderBy = 'createdAt_DESC'
+
+          // IMPORTANT - in order not to see error messages
           // to load store / cached data, need to load homes first or query HOME_LIST first
-          const data = store.readQuery({query: HOME_LIST})
+          // 'readQuery' always reads data from the local cache while 'query' might retrieve data either from the cache or remotely
+          const data = store.readQuery({
+            query: HOME_LIST,
+            variables: {first, skip, orderBy}
+          })
           data.homeslist.homes.splice(0, 0, createHome)
           store.writeQuery({
             query: HOME_LIST,
-            data
+            data,
+            variables: {first, skip, orderBy}
           })
         }
       })
@@ -62,7 +74,7 @@ class CreateHomeForm extends Component {
       console.log(e)
     }
     // redirect from CreateHomeForm to HomeList after a mutation was performed
-    this.props.history.push('/home')
+    this.props.history.push('/new/1')
   }
 
   // uncontrolled form
@@ -108,9 +120,14 @@ class CreateHomeForm extends Component {
 const CREATE_HOME = gql`
   mutation PostMutation ($title: String!, $price: Int!, $nbed: Int!) { # mutation name, takes three arguments
     createHome(title: $title, price: $price, nbed: $nbed) { # resolver name, add resolver function in server/src/resolvers/mutation and server/src/schema.graphql
-      title,
-      price,
+      title
+      price
       nbed
+      createdAt
+      postedBy {
+        id
+        name
+      }
     }
   }
 `

@@ -2,7 +2,7 @@
 
 type Query {
   feed(filter: String, skip: Int, first: Int, orderBy: LinkOrderByInput): Feed!
-  homeslist(filter: String, skip: Int, first: Int, orderBy: LinkOrderByInput): HomesList!
+  homeslist(filter: String, skip: Int, first: Int, orderBy: HomeOrderByInput): HomesList!
 }
 
 type Feed {
@@ -12,6 +12,7 @@ type Feed {
 
 type HomesList {
   homes: [Home!]!
+  count: Int!
 }
 
 type Mutation {

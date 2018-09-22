@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, Redirect } from 'react-router-dom'
 // import logo from '../logo.svg';
 import '../styles/App.css';
 import Header from './Header'
@@ -19,8 +19,11 @@ class App extends Component {
             <Route exact path="/login" component={Login} />
             <Route exact path="/" component={LinkList} />
             <Route exact path="/create" component={CreateHomeForm} />
-            <Route exact path="/home" component={HomeList} />
+            {/* <Route exact path="/home" component={HomeList} /> */}
+            <Route exact path="/home" render={() => <Redirect to='/new/1' />} />
             <Route exact path="/search" component={Search} />
+            <Route exact path="/top" component={HomeList} />
+            <Route exact path="/new/:page" component={HomeList} />
           </Switch>
         </div>
       </div>

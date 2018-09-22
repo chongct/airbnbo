@@ -61,10 +61,11 @@ async function vote(parent, args, ctx, info) {
 }
 
 async function createHome(parent, {title, price, nbed}, ctx, info) {
+  const userId = getUserId(ctx)
   // console.log('received data', {title, price, nbed})
   return ctx.db.mutation.createHome(
     {
-      data: {title, price, nbed}
+      data: {title, price, nbed, postedBy: { connect: { id: userId } } }
     }, info
   )
 }

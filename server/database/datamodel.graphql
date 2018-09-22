@@ -32,6 +32,7 @@ type User {
 
 type Home {
   id: ID! @unique
+  createdAt: DateTime!
   title: String!
   price: Int!
   nbed: Int!

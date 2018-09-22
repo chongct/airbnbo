@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/public-neonscar-158/hackernews-graphql-js/dev
-# timestamp: Sun Sep 16 2018 00:58:23 GMT+0800 (+08)
+# timestamp: Sat Sep 22 2018 01:31:58 GMT+0800 (+08)
 
 type AggregateHome {
   count: Int!
@@ -30,6 +30,7 @@ scalar DateTime
 
 type Home implements Node {
   id: ID!
+  createdAt: DateTime!
   title: String!
   price: Int!
   nbed: Int!
@@ -91,6 +92,8 @@ type HomeEdge {
 enum HomeOrderByInput {
   id_ASC
   id_DESC
+  createdAt_ASC
+  createdAt_DESC
   title_ASC
   title_DESC
   price_ASC
@@ -99,12 +102,11 @@ enum HomeOrderByInput {
   nbed_DESC
   updatedAt_ASC
   updatedAt_DESC
-  createdAt_ASC
-  createdAt_DESC
 }
 
 type HomePreviousValues {
   id: ID!
+  createdAt: DateTime!
   title: String!
   price: Int!
   nbed: Int!
@@ -252,6 +254,28 @@ input HomeWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
   title: String
 
   """All values that are not equal to given value."""
