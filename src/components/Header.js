@@ -39,6 +39,11 @@ class Header extends Component {
               </Link>
             </div>
           )}
+
+          <div className="ml1">|</div>
+          <Link to="/card" className="ml1 no-underline black">
+            card API
+          </Link>
         </div>
 
         <div className="flex flex-fixed">

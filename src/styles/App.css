@@ -27,6 +27,6 @@
   to { transform: rotate(360deg); }
 }
 
-.vote-btn, .vote-home-btn {
+.vote-btn, .vote-home-btn, .add-card-btn {
   cursor: pointer;
 }
